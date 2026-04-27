@@ -1,0 +1,227 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | MoliyaTracker{% endblock %}
+
+{% block content %}
+<style>
+    /* Maxsus uslublar */
+    .dashboard-header { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .action-btn { transition: 0.3s; border-radius: 12px; font-weight: 600; }
+    .action-btn:hover { transform: translateY(-2px); }
+    .card { border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+    .table thead th { background: #f8fafc; color: #64748b; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+    .badge-custom { padding: 8px 16px; border-radius: 10px; font-weight: 600; display: inline-block; font-size: 0.85rem; }
+    .modal-content { border-radius: 25px; border: none; padding: 15px; }
+    .form-control, .form-select { border-radius: 12px; padding: 12px; border: 1px solid #e2e8f0; }
+    .form-control:focus { box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1); }
+</style>
+
+<div class="container py-4">
+    <div class="dashboard-header d-flex flex-column flex-md-row justify-content-between align-items-center mb-5">
+        <div>
+            <h2 class="fw-bold mb-1 text-dark">
+                <i class="bi bi-grid-1x2-fill me-2 text-primary"></i>Tranzaksiyalar
+            </h2>
+            <p class="text-muted mb-0">Xush kelibsiz, {{ user.username }}! Bugun: {% now "d-F, Y" %}</p>
+        </div>
+        <div class="d-flex gap-2 mt-3 mt-md-0">
+            <button class="btn btn-primary action-btn px-4 py-2" data-bs-toggle="modal" data-bs-target="#transactionModal">
+                <i class="bi bi-plus-circle me-2"></i>Yangi amal
+            </button>
+            <button class="btn btn-outline-secondary action-btn px-4 py-2" data-bs-toggle="modal" data-bs-target="#categoryModal">
+                <i class="bi bi-tags me-2"></i>Kategoriya
+            </button>
+        </div>
+    </div>
+    <div class="card p-4 mb-4 border-0 shadow-sm">
+    <h6 class="fw-bold mb-3"><i class="bi bi-filter"></i> Filtrlash</h6>
+    <form method="get" class="row g-3">
+        {% for field in filter_form %}
+            <div class="col-md-3">
+                <label class="form-label small">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+        <div class="col-12 text-end">
+            <a href="{% url 'transaction_main' %}" class="btn btn-light btn-sm">Tozalash</a>
+            <button type="submit" class="btn btn-primary btn-sm px-4">Qidirish</button>
+        </div>
+    </form>
+</div>
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="mb-2">
+                <h6 class="text-uppercase small fw-bold text-muted mb-3">Sizning kategoriyalaringiz</h6>
+                <div class="d-flex flex-wrap gap-2">
+                    {% for cat in categories %}
+                        <div class="badge-custom border {% if cat.type == 'daromad' %}bg-success-subtle text-success border-success-subtle{% else %}bg-danger-subtle text-danger border-danger-subtle{% endif %}">
+                            <i class="bi bi-hash"></i>{{ cat.name }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card overflow-hidden">
+                <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+                    <h5 class="fw-bold mb-0 text-dark">Oxirgi amallar</h5>
+                    <span class="badge bg-primary-subtle text-primary rounded-pill px-3">{{ transactions.count }} ta amal</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Sana</th>
+                                <th>Hisob va Izoh</th>
+                                <th>Kategoriya</th>
+                                <th class="text-end pe-4">Summa</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in transactions %}
+                            <tr>
+                                <td class="ps-4">
+                                    <div class="fw-bold">{{ t.date|date:"H:i" }}</div>
+                                    <small class="text-muted">{{ t.date|date:"d.m.Y" }}</small>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-light p-2 rounded-3 me-3 text-primary">
+                                            <i class="bi bi-credit-card-2-front fs-5"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-bold text-dark">{{ t.account.name }}</div>
+                                            <small class="text-muted">{{ t.comment|default:"Izoh yo'q"|truncatechars:30 }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-secondary border px-3 py-2 rounded-pill">
+                                        <i class="bi bi-tag-fill me-1"></i>{{ t.category.name }}
+                                    </span>
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="fw-bold fs-5 {% if t.type == 'daromad' %}text-success{% else %}text-danger{% endif %}">
+                                        {% if t.type == 'daromad' %}+{% else %}-{% endif %} {{ t.amount|floatformat:0 }}
+                                    </div>
+                                    <small class="text-muted text-uppercase fw-bold" style="font-size: 0.7rem;">{{ t.account.currency }}</small>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center py-5 text-muted">Hali hech qanday amal bajarilmadi.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="transactionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="fw-bold">Yangi tranzaksiya qo'shish</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'transaction_main' %}">
+                {% csrf_token %}
+                <div class="modal-body py-4">
+                    {% for field in t_form %}
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold text-secondary">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">{{ field.errors|first }}</div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-4 shadow">
+                        Saqlash <i class="bi bi-send ms-2"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="categoryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="fw-bold text-center w-100">Yangi Kategoriya</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'category_add_post' %}">
+                {% csrf_token %}
+                <div class="modal-body py-4 text-start">
+                    {{ c_form.as_p }}
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="submit" class="btn btn-secondary w-100 py-2 rounded-3">
+                        <i class="bi bi-folder-plus me-2"></i>Yaratish
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if t_form.errors %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var myModal = new bootstrap.Modal(document.getElementById('transactionModal'));
+        myModal.show();
+    });
+</script>
+{% endif %}
+<script>document.addEventListener('DOMContentLoaded', function() {
+    // Filtr elementlarini tanlaymiz
+    const filterType = document.getElementById('id_type');
+    const filterCategory = document.getElementById('id_category');
+
+    // Kategoriyalar ma'lumotlari
+    const categoryData = [
+        {% for cat in categories %}
+        { id: "{{ cat.id }}", name: "{{ cat.name|escapejs }}", type: "{{ cat.type|lower }}" },
+        {% endfor %}
+    ];
+
+    function filterNow() {
+        if (!filterType || !filterCategory) return;
+
+        const selectedType = filterType.value.toLowerCase();
+        // Hozirgi tanlangan kategoriya ID sini saqlaymiz (refreshdan keyin yo'qolmasligi uchun)
+        const currentSelectedId = filterCategory.value;
+
+        // Ro'yxatni tozalash
+        filterCategory.innerHTML = '<option value="">---------</option>';
+
+        // Tanlangan turga mos kategoriyalarni qo'shish
+        categoryData.forEach(cat => {
+            if (selectedType === "" || cat.type === selectedType) {
+                const option = new Option(cat.name, cat.id);
+                filterCategory.add(option);
+            }
+        });
+
+        // Tanlangan qiymatni qayta tiklash
+        filterCategory.value = currentSelectedId;
+    }
+
+    if (filterType) {
+        // 1. Foydalanuvchi turni o'zgartirganda ishlaydi
+        filterType.addEventListener('change', filterNow);
+        
+        // 2. Sahifa yuklanganda (qidiruvdan keyin) darhol ishlaydi
+        filterNow();
+    }
+});
+</script>
+{% endblock %}

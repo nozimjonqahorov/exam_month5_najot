@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Mening Hisoblarim</h2>
+        <a href="{% url 'account-create' %}" class="btn btn-primary">+ Yangi hisob</a>
+    </div>
+
+    <div class="row">
+        {% for account in accounts %}
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-0 bg-dark text-white p-3" style="border-radius: 15px;">
+                <div class="card-body">
+                    <h5 class="card-title text-uppercase">{{ account.get_type_display }}</h5>
+                    <p class="card-text text-muted small">{{ account.name }}</p>
+                    <h3 class="my-3">{{ account.balance }} {{ account.get_currency_display }}</h3>
+                    
+                    {% if account.card_number %}
+                        <p class="mb-0">**** **** **** {{ account.card_number|slice:"-4:" }}</p>
+                    {% endif %}
+                    
+                    <div class="mt-3 text-end">
+                        <a href="{% url 'account-detail' account.pk %}" class="text-info text-decoration-none small">Batafsil →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p>Hozircha hech qanday hisobingiz yo'q.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

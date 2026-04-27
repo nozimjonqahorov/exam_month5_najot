@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5 text-center p-5 border shadow-sm bg-white" style="border-radius: 15px;">
+            <h2 class="text-danger mb-4">Hisobni o'chirish</h2>
+            <p>Siz haqiqatdan ham <strong>"{{ account.name }}"</strong> hisobini va unga bog'liq barcha ma'lumotlarni o'chirib tashlamoqchimisiz?</p>
+            
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-danger">Ha, o'chirilsin</button>
+                    <a href="{% url 'account-detail' account.pk %}" class="btn btn-light">Yo'q, bekor qilish</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

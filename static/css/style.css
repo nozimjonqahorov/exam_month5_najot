@@ -1,0 +1,86 @@
+/* Konteyner markazda va chiroyli soya bilan */
+.form-container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-container h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+/* Har bir maydon bloki */
+.field-group {
+    margin-bottom: 20px;
+}
+
+.field-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #555;
+}
+
+/* Inputlarni chiroyli qilish */
+.field-group input, 
+.field-group select, 
+.field-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    box-sizing: border-box; /* Padding ichkarida qolishi uchun */
+}
+
+.field-group input:focus {
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    outline: none;
+}
+
+/* Tugmalar */
+.btn-save {
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-save:hover {
+    background-color: #218838;
+}
+
+.btn-cancel {
+    display: block;
+    text-align: center;
+    margin-top: 15px;
+    color: #666;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.btn-cancel:hover {
+    text-decoration: underline;
+}
+
+/* Xatoliklar */
+.error-message {
+    font-size: 13px;
+    margin-top: 5px;
+    list-style: none;
+    padding: 0;
+}

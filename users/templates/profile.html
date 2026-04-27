@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Profil - {{ user.username }}{% endblock %}
+
+{% block content %}
+<div style="max-width: 600px; margin: 40px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); text-align: center;">
+    
+    <h2>Mening profilim</h2>
+
+    <div style="margin-bottom: 25px;">
+        {% if user.photo %}
+            <img src="{{ user.photo.url }}" alt="Profil rasmi" style="width: 150px; height: 150px; border-radius: 50%; object-fit: cover; border: 4px solid #f0f2f5;">
+        {% else %}
+            <div style="width: 150px; height: 150px; border-radius: 50%; background: #ddd; display: inline-flex; align-items: center; justify-content: center; font-size: 3rem; color: #777; margin: auto;">
+                👤
+            </div>
+        {% endif %}
+    </div>
+
+    <div style="text-align: left; margin-bottom: 30px;">
+        <div style="padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+            <span style="color: #7f8c8d; font-weight: 600;">Username:</span>
+            <span style="font-weight: bold;">{{ user.username }}</span>
+        </div>
+        <div style="padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+            <span style="color: #7f8c8d; font-weight: 600;">Ism:</span>
+            <span>{{ user.first_name|default:"Kiritilmagan" }}</span>
+        </div>
+        <div style="padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+            <span style="color: #7f8c8d; font-weight: 600;">Familiya:</span>
+            <span>{{ user.last_name|default:"Kiritilmagan" }}</span>
+        </div>
+        <div style="padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+            <span style="color: #7f8c8d; font-weight: 600;">Email:</span>
+            <span>{{ user.email }}</span>
+        </div>
+        <div style="padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between;">
+            <span style="color: #7f8c8d; font-weight: 600;">Ro'yxatdan o'tgan sana:</span>
+            <span>{{ user.created_at|date:"d.m.Y" }}</span>
+        </div>
+    </div>
+
+    <div style="display: flex; gap: 10px; justify-content: center;">
+        <a href="{% url 'profile-update' %}" class="btn" style="background: #3498db;">Ma'lumotlarni tahrirlash</a>
+        <a href="{% url 'change-password' %}" class="btn" style="background: #3498db;">Parolni o'zgartirish</a>
+        <a href="{% url 'logout' %}" class="btn" style="background: #e74c3c;">Chiqish</a>
+    </div>
+</div>
+{% endblock %}

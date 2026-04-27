@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0" style="border-radius: 15px;">
+                <div class="card-header bg-warning text-dark py-3" style="border-radius: 15px 15px 0 0;">
+                    <h4 class="mb-0 text-center">⚙️ Hisobni tahrirlash</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        {% if form.errors %}
+                            <div class="alert alert-danger">
+                                Iltimos, xatolarni tuzating.
+                            </div>
+                        {% endif %}
+
+                        <div class="mb-3">
+                            {{ form.as_p }}
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning">O'zgarishlarni saqlash</button>
+                            <a href="{% url 'account-detail' account.pk %}" class="btn btn-outline-secondary">Bekor qilish</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="text-center mt-3">
+                <small class="text-muted">ID: #{{ account.pk }} | Yaratilgan sana: {{ account.created_at|date:"d.m.Y" }}</small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

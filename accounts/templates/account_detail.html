@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}{{ account.name }} | Tafsilotlar{% endblock %}
+
+{% block content %}
+<style>
+    /* Kredit karta effekti */
+    .bank-card {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border-radius: 24px;
+        color: white;
+        padding: 40px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+    }
+    .card-chip {
+        width: 50px;
+        height: 40px;
+        background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+        border-radius: 8px;
+        margin-bottom: 20px;
+    }
+    .card-logo-icon {
+        position: absolute;
+        right: 40px;
+        top: 40px;
+        font-size: 3rem;
+        opacity: 0.2;
+    }
+    /* Statistika kartachalari */
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+    /* Tranzaksiya qatorlari */
+    .tr-item {
+        transition: 0.2s;
+        border-radius: 12px;
+        margin-bottom: 8px;
+    }
+    .tr-item:hover {
+        background-color: #f1f5f9;
+        transform: translateX(5px);
+    }
+    .icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+</style>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" class="text-decoration-none">Dashboard</a></li>
+                <li class="breadcrumb-item active">{{ account.name }}</li>
+            </ol>
+        </nav>
+
+        <div class="bank-card mb-4">
+            <i class="bi bi-credit-card-2-front card-logo-icon"></i>
+            <div class="card-chip"></div>
+            <div class="mb-4">
+                <span class="text-uppercase small opacity-50 fw-bold" style="letter-spacing: 2px;">{{ account.get_type_display }}</span>
+                <h2 class="fw-bold mt-1">{{ account.name }}</h2>
+            </div>
+            <div class="mt-5 pt-3 d-flex justify-content-between align-items-end">
+                <div>
+                    <p class="small opacity-50 mb-1">Joriy balans</p>
+                    <h1 class="display-5 fw-bold mb-0">{{ account.balance|floatformat:0 }} <span class="fs-4 fw-normal">{{ account.currency }}</span></h1>
+                </div>
+                <div class="text-end">
+                    <p class="small opacity-50 mb-1">Sana</p>
+                    <p class="fw-medium mb-0">26 / 04</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-flex">
+            <a href="{% url 'account-update' account.pk %}" class="btn btn-outline-dark flex-grow-1 border-2 py-3 rounded-4">
+                <i class="bi bi-pencil-square me-2"></i>Tahrirlash
+            </a>
+            <a href="{% url 'account-delete' account.pk %}" class="btn btn-outline-danger flex-grow-1 border-2 py-3 rounded-4">
+                <i class="bi bi-trash3 me-2"></i>O'chirish
+            </a>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0">Oxirgi harakatlar</h4>
+            <span class="badge bg-primary-subtle text-primary rounded-pill px-3 py-2 fw-semibold">
+                {{ account.account_transactions.all.count }} ta amal
+            </span>
+        </div>
+
+        <div class="card border-0 rounded-4 shadow-sm p-3">
+            {% for tr in account.account_transactions.all %}
+                <div class="tr-item p-3 d-flex align-items-center">
+                    <div class="icon-box {% if tr.type == 'daromad' %}bg-success-subtle text-success{% else %}bg-danger-subtle text-danger{% endif %} me-3">
+                        <i class="bi {% if tr.type == 'daromad' %}bi-arrow-down-left{% else %}bi-arrow-up-right{% endif %}"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold mb-0 text-dark">{{ tr.category.name|title }}</h6>
+                        <small class="text-muted">{{ tr.date|date:"d-M, H:i" }} {% if tr.comment %}• {{ tr.comment|truncatechars:20 }}{% endif %}</small>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-bold fs-5 {% if tr.type == 'daromad' %}text-success{% else %}text-danger{% endif %}">
+                            {% if tr.type == 'daromad' %}+{% else %}-{% endif %}{{ tr.amount|floatformat:0 }}
+                        </div>
+                        <small class="text-muted text-uppercase">{{ account.currency }}</small>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="text-center py-5">
+                    <img src="https://cdn-icons-png.flaticon.com/512/5058/5058432.png" width="80" class="opacity-25 mb-3">
+                    <p class="text-muted">Hali tranzaksiyalar yo'q</p>
+                    <a href="{% url 'transaction_main' %}" class="btn btn-primary btn-sm rounded-pill">Yangi qo'shish</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
