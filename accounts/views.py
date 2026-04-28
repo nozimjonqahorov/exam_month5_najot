@@ -8,7 +8,7 @@ from transactions.models import Transaction
 from shared.utils import get_exchange_rates, convert_currency
 from decimal import Decimal
 from django.contrib import messages
-
+from django.db import transaction
 
 
 class AccountListView(LoginRequiredMixin, View):
@@ -95,8 +95,6 @@ class TransferListView(LoginRequiredMixin, View):
 
 
 
-from django.db import transaction # Atomic uchun
-
 class MakeTransafer(LoginRequiredMixin, View):
     def get(self, request):
         user_accounts = Account.objects.filter(user=request.user)
@@ -119,11 +117,9 @@ class MakeTransafer(LoginRequiredMixin, View):
             if from_account.currency == 'usd' and not amount > 1:
                 print("hshshshshshs")
                 messages.error(request, "Dollar hisobi uchun minimal o'tkazma $1")
-                # return ValueError("ok")
+           
             elif from_account.currency == 'uzs' and amount < 1000:
                 messages.error(request, "So'm hisobi uchun minimal o'tkazma 1000 so'm")
-                print("som xato hs")
-                # return ValueError("ok")
 
             elif from_account == to_account:
                 messages.error(request, "Transfer uchun boshqa hisobni tanlang!")
