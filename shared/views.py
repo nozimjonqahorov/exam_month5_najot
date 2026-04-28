@@ -8,6 +8,8 @@ from django.db.models import Sum
 from transactions.models import Transaction
 from datetime import datetime, timedelta
 from django.utils import timezone
+from accounts.models import Transfer
+
 
 class HomepageView(TemplateView):
     template_name = "home.html"
@@ -65,7 +67,8 @@ class DashboardView(View):
                 monthly_income += amount_converted
             else:
                 monthly_expense += amount_converted
-
+        
+        transfers = Transfer.objects.filter(from_account__user = request.user).order_by("-date")[:5]
         context = {
             'accounts': accounts_data,
             'total_balance': total_balance,
@@ -74,5 +77,6 @@ class DashboardView(View):
             'recent_transactions': recent_transactions,
             'monthly_income': round(monthly_income, 2),
             'monthly_expense': round(monthly_expense, 2),
+            "transfers":transfers
         }
         return render(request, 'dashboard.html', context)

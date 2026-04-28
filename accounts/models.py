@@ -33,7 +33,15 @@ class Account(models.Model):
                 ),
             ]
 
-   
+
+class Transfer(models.Model):
+    from_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='transfer_out')
+    to_account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='transfer_in')
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"from {self.from_account.name} to {self.to_account.name}"
 
 
 

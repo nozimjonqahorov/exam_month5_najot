@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}O‘tkazma{% endblock %}
+
+{% block content %}
+<section class="grid-single narrow">
+    <article class="card form-card">
+        <p class="eyebrow">Amaliyotlar</p>
+        <h1>{{ title }}</h1>
+        <form method="post">
+            {% csrf_token %}
+            <p>
+                <label for="from_account_id">Utkazma uchun kartani tanlang</label>
+                <select name="from_account_id" id="from_account_id">
+                    {% for item in user_accounts %}
+                        <option value="{{ item.id }}">{{ item.name }} | {{ item.balance }} | {{ item.card_number | slice:":8" }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+            <p>
+                <label for="to_account_id">Qabul qiluvchi karta</label>
+                <select name="to_account_id" id="to_account_id">
+                    {% for item in user_accounts %}
+                        <option value="{{ item.id }}">{{ item.name }} | {{ item.balance }} | {{ item.card_number | slice:":8" }}</option>
+                    {% endfor %}
+                </select>
+
+            </p>
+            <p>
+                {{ form.as_p }}
+            <button type="submit" class="button">Saqlash</button>
+        </form>
+    </article>
+</section>
+{% endblock %}

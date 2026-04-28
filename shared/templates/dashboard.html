@@ -579,5 +579,60 @@
         </div>
         {% endfor %}
     </div>
+
+    <div class="section-header mb-4">
+        <h5 class="section-title">
+            <i class="bi bi-clock-history section-title-icon"></i>
+            Oxirgi transferlar
+        </h5>
+        {% if transfers %}
+        <a href="{% url 'transfer_list' %}" class="view-all-link">
+            Hammasini ko'rish
+            <i class="bi bi-arrow-right"></i>
+        </a>
+        {% endif %}
+    </div>
+
+    <div class="transfer-container">
+        {% for t in transfers %}
+        <div class="transfer-item d-flex align-items-center justify-content-between p-3 mb-2 shadow-sm rounded bg-white">
+            <div class="d-flex align-items-center">
+                <div class="transfer-icon-wrapper bg-primary bg-opacity-10 p-3 rounded-circle me-3">
+                    <i class="bi bi-arrow-left-right text-primary"></i>
+                </div>
+                
+                <div class="transfer-info">
+                    <h6 class="mb-1 fw-bold text-dark">
+                        {{ t.from_account.name|title }} 
+                        <i class="bi bi-chevron-right mx-1 small text-muted"></i> 
+                        {{ t.to_account.name|title }}
+                    </h6>
+                    <small class="text-muted">
+                        <i class="bi bi-calendar3 me-1"></i>{{ t.date|date:"d-M, H:i" }}
+                    </small>
+                </div>
+            </div>
+
+            <div class="text-end">
+                <span class="fw-bold text-dark" style="font-size: 1.1rem;">
+                    {{ t.amount|floatformat:2 }}
+                </span>
+                <br>
+                <small class="text-uppercase text-muted small">{{ t.from_account.currency }}</small>
+            </div>
+        </div>
+        {% empty %}
+        <div class="empty-state text-center py-5">
+            <div class="empty-state-icon mb-3">
+                <i class="bi bi-arrow-left-right display-4 text-muted"></i>
+            </div>
+            <p class="empty-state-text text-muted">Transfer tarixi hali mavjud emas.</p>
+            <a href="{% url 'create_transfer' %}" class="btn btn-primary rounded-pill px-4">
+                <i class="bi bi-plus-circle me-2"></i>Birinchi o'tkazmani amalga oshirish
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+
 </div>
 {% endblock %}

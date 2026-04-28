@@ -5,6 +5,7 @@ from .models import Category, Transaction
 from django.db import transaction 
 from django.contrib import messages
 from .filters import TransactionFilter
+from accounts.models import Transfer
 
 class TransactionMainView(View):
     def get(self, request, form=None):
@@ -16,7 +17,9 @@ class TransactionMainView(View):
             "transactions": f.qs, 
             "filter_form": f.form, 
             "t_form": form if form else TransactionForm(user=request.user),
-            "c_form": CategoryForm(), # Kategoriya formasi esdan chiqmasin
+            "c_form": CategoryForm(),
+
+
         }
         return render(request, 'main_page.html', context)
 

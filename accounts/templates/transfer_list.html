@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+        <a href="{% url 'create_transfer' %}" class="btn btn-primary">+ Yangi transfer</a>
+    </div>
+
+
+<div class="filter-section mb-4 p-3 bg-white rounded shadow-sm">
+    <form method="get" class="row g-3">
+        <div class="col-md-3 col-6">
+            <label class="form-label small text-muted">Min. Summa</label>
+            <input type="number" name="min_summa" class="form-control form-control-sm" 
+                   placeholder="0.00" value="{{ request.GET.min_summa }}">
+        </div>
+        <div class="col-md-3 col-6">
+            <label class="form-label small text-muted">Max. Summa</label>
+            <input type="number" name="max_summa" class="form-control form-control-sm" 
+                   placeholder="1000.00" value="{{ request.GET.max_summa }}">
+        </div>
+
+        <div class="col-md-3 col-6">
+            <label class="form-label small text-muted">Dan (sana)</label>
+            <input type="date" name="from_date" class="form-control form-control-sm" 
+                   value="{{ request.GET.from_date }}">
+        </div>
+        <div class="col-md-3 col-6">
+            <label class="form-label small text-muted">Gacha (sana)</label>
+            <input type="date" name="to_date" class="form-control form-control-sm" 
+                   value="{{ request.GET.to_date }}">
+        </div>
+
+        <div class="col-12 d-flex justify-content-end gap-2">
+            <a href="{% url 'transfer_list' %}" class="btn btn-light btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-counterclockwise me-1"></i>Tozalash
+            </a>
+            <button type="submit" class="btn btn-primary btn-sm rounded-pill px-4">
+                <i class="bi bi-funnel me-1"></i>Filtrlash
+            </button>
+        </div>
+    </form>
+</div>
+
+<style>
+    .filter-section {
+        border: 1px solid #eee;
+    }
+    .filter-section .form-control {
+        border-radius: 8px;
+        border: 1px solid #dfe4e9;
+    }
+    .filter-section .form-control:focus {
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
+    }
+    .form-label {
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+</style>
+
+
+<div class="container mt-4" style="max-width: 600px;">
+    <h4 class="mb-4 fw-bold text-secondary text-center">O'tkazmalar tarixi</h4>
+
+    <div class="transfer-list">
+        {% for t in transfers %}
+        <div class="transfer-card d-flex align-items-center justify-content-between p-3 mb-2 bg-white rounded shadow-sm">
+            <div class="d-flex align-items-center">
+                <div class="icon-box bg-light rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 45px; height: 45px;">
+                    <i class="bi bi-arrow-left-right text-primary"></i>
+                </div>
+                
+                <div>
+                    <h6 class="mb-0 fw-bold" style="font-size: 0.95rem;">
+                        {{ t.from_account.name|title }} 
+                        <span class="text-muted mx-1">→</span> 
+                        {{ t.to_account.name|title }}
+                    </h6>
+                    <small class="text-muted" style="font-size: 0.8rem;">
+                        <i class="bi bi-clock me-1"></i>{{ t.date|date:"d-M, H:i" }}
+                    </small>
+                </div>
+            </div>
+
+            <div class="text-end">
+                <span class="fw-bold text-dark" style="font-size: 1rem;">
+                    {{ t.amount|floatformat:2 }}
+                </span>
+                <div class="text-muted small" style="font-size: 0.7rem; text-transform: uppercase;">
+                    {{ t.from_account.currency }}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center py-5">
+            <i class="bi bi-info-circle display-4 text-muted"></i>
+            <p class="mt-3 text-muted">Filterga tug'ri keladigan transferlar topilmadi.</p>
+            <a href="{% url 'create_transfer' %}" class="btn btn-outline-primary btn-sm rounded-pill">
+                Yangi transfer qo'shish
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .transfer-card {
+        border-left: 4px solid #0d6efd; /* Transferni bildiruvchi ko'k chiziq */
+        transition: 0.2s;
+    }
+    .transfer-card:hover {
+        background-color: #f8f9fa !important;
+        transform: scale(1.01);
+    }
+    .icon-box i {
+        font-size: 1.2rem;
+    }
+</style>
+{% endblock %}

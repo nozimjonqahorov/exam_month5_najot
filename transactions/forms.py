@@ -12,7 +12,7 @@ class TransactionForm(forms.ModelForm):
         model = Transaction
         fields = ['account', 'type', 'amount', 'category', 'comment']
 
-        # forms.py ichida
+
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)

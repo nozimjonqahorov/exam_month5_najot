@@ -1,6 +1,6 @@
 from django import forms
-from .models import Account
-
+from .models import Account, Transfer
+from decimal import Decimal
 class AccountCreateForm(forms.ModelForm):
     class Meta:
         model = Account
@@ -27,3 +27,8 @@ class AccountCreateForm(forms.ModelForm):
             }),
         }
 
+
+class TransferCreateForm(forms.Form):
+    amount = forms.DecimalField(min_value=Decimal("0.01"), max_digits=12, decimal_places=2)
+
+   
