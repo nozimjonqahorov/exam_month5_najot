@@ -18,13 +18,11 @@ class HomepageView(TemplateView):
 
 class DashboardView(View):
     def get(self, request):
-        # 1. Foydalanuvchining hamma hisoblarini olamiz
         user_accounts = Account.objects.filter(user=request.user)
         
-        # 2. API-dan kurslarni olamiz
-        rates = get_exchange_rates()
+        rates = get_exchange_rates() #kursni olamiz
         
-        # 3. Valyutani aniqlaymiz
+        # Valyutani aniqlaymiz
         display_currency = request.GET.get('currency', 'UZS').upper()
         
         total_balance = 0
@@ -43,7 +41,7 @@ class DashboardView(View):
             account__user=request.user
         ).select_related('category', 'account').order_by('-date')[:5]
 
-        # 5. Bu oyning daromad va xarajatlarini hisoblash
+        # Bu oyning daromad va xarajatlarini hisoblash
         today = timezone.now()
         first_day_of_month = today.replace(day=1)
         

@@ -65,4 +65,4 @@ class CategoryCreatePostView(View):
             else:
                 messages.success(request, "Kategoriya qo'shildi.")
         
-        return redirect('transaction_main') # Har qanday holatda redirect
+        return redirect('transaction_main') 

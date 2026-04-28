@@ -7,7 +7,7 @@ class TransactionFilter(django_filters.FilterSet):
     min_amount = django_filters.NumberFilter(field_name="amount", lookup_expr='gte', label="Min summa")
     max_amount = django_filters.NumberFilter(field_name="amount", lookup_expr='lte', label="Max summa")
     
-    # Aynan shu yerda yoziladi:
+
     start_date = django_filters.DateFilter(
         field_name="date", 
         lookup_expr='date__gte', 
@@ -23,7 +23,6 @@ class TransactionFilter(django_filters.FilterSet):
     )
 
     def __init__(self, *args, **kwargs):
-        # Viewdan kelayotgan requestni ajratib olamiz
         request = kwargs.pop('request', None)
         super(TransactionFilter, self).__init__(*args, **kwargs)
         
@@ -34,5 +33,4 @@ class TransactionFilter(django_filters.FilterSet):
 
     class Meta:
         model = Transaction
-        # Qolgan oddiy filtrlarni ham shu yerda qoldirishingiz mumkin
         fields = ['type', 'category', 'account']

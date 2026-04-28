@@ -73,7 +73,7 @@ class AccountDeleteView(LoginRequiredMixin, View):
 
 class TransferListView(LoginRequiredMixin, View):
     def get(self, request):
-        transfers = Transfer.objects.filter(from_account__user = request.user).all()
+        transfers = Transfer.objects.filter(from_account__user = request.user).all().order_by("-date")
 
         min_summa = request.GET.get("min_summa")
         max_summa = request.GET.get("max_summa")
@@ -115,7 +115,17 @@ class MakeTransafer(LoginRequiredMixin, View):
             from_account = get_object_or_404(Account, pk=from_id, user=request.user)
             to_account = get_object_or_404(Account, pk=to_id, user=request.user)
 
-            if from_account == to_account:
+  
+            if from_account.currency == 'usd' and not amount > 1:
+                print("hshshshshshs")
+                messages.error(request, "Dollar hisobi uchun minimal o'tkazma $1")
+                # return ValueError("ok")
+            elif from_account.currency == 'uzs' and amount < 1000:
+                messages.error(request, "So'm hisobi uchun minimal o'tkazma 1000 so'm")
+                print("som xato hs")
+                # return ValueError("ok")
+
+            elif from_account == to_account:
                 messages.error(request, "Transfer uchun boshqa hisobni tanlang!")
             elif from_account.balance < amount:
                 messages.error(request, "Balans yetarli emas")
