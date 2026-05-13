@@ -1,7 +1,7 @@
 
 from django.views import View
 from django.shortcuts import render
-from accounts.models import Account
+from accounts.models import Account, Transfer
 from .utils import get_exchange_rates, convert_currency
 from django.views.generic import TemplateView
 from django.db.models import Sum
@@ -9,14 +9,18 @@ from transactions.models import Transaction
 from datetime import datetime, timedelta
 from django.utils import timezone
 from accounts.models import Transfer
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class HomepageView(LoginRequiredMixin, View):
+    def get(self, request):
+        transfers = Transfer.objects.filter(from_account__user = request.user).order_by("-date")[:5]
+        transactions = Transaction.objects.filter(
+            account__user=request.user
+        ).select_related('category', 'account').order_by('-date')[:5]
+        return render(request, "home.html", {"transfers":transfers, "transactions":transactions})
 
 
-class HomepageView(TemplateView):
-    template_name = "home.html"
-
-
-
-class DashboardView(View):
+class DashboardView(LoginRequiredMixin, View):
     def get(self, request):
         user_accounts = Account.objects.filter(user=request.user)
         
@@ -64,7 +68,7 @@ class DashboardView(View):
             if trans.type == 'daromad':
                 monthly_income += amount_converted
             else:
-                monthly_expense += amount_converted
+                monthly_expense -= amount_converted
         
         transfers = Transfer.objects.filter(from_account__user = request.user).order_by("-date")[:5]
         context = {
@@ -78,3 +82,4 @@ class DashboardView(View):
             "transfers":transfers
         }
         return render(request, 'dashboard.html', context)
+

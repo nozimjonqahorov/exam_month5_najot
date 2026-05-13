@@ -1,18 +1,73 @@
 {% extends 'base.html' %}
 
-{% block title %}Bosh sahifa - Moliya{% endblock %}
-
 {% block content %}
-    <h1>Xush kelibsiz! 👋</h1>
-    <p>Bu sizning shaxsiy moliya boshqaruv tizimingiz.</p>
-    
-    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px;">
-        <h3>Tezkor statistika:</h3>
-        <ul>
-            <li>Umumiy balans: <strong>0 so'm</strong></li>
-            <li>Bugungi xarajatlar: <strong>0 so'm</strong></li>
-        </ul>
-    </div>
+<div class="container mt-4">
+    <div class="row">
+        
+        <div class="col-md-6">
+            <h5 class="mb-3">Oxirgi tranzaksiyalar</h5>
+            <div class="list-group shadow-sm">
+                {% for item in transactions %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="d-block text-capitalize">{{ item.category.name|default:"Kategoriyasiz" }}</strong>
+                        <small class="text-muted">{{ item.account.name }} • {{ item.date|date:"d-M, H:i" }}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="fw-bold {% if item.type == 'daromad' %}text-success{% else %}text-danger{% endif %}">
+                            {% if item.type == 'daromad' %}+{% else %}-{% endif %}{{ item.amount }}
+                        </span>
+                        <br>
+                        <small class="text-uppercase text-muted">{{ item.account.currency }}</small>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="list-group-item text-center text-muted">Tranzaksiyalar mavjud emas.</div>
+                {% endfor %}
+            </div>
+            <a href="{% url 'transaction_main' %}" class="btn btn-link btn-sm mt-2">Barchasini ko'rish</a>
+        </div>
 
-    <p>Hozircha bu yerda ma'lumotlar yo'q, lekin tez orada biz bu yerda tranzaksiyalarni ko'rsatamiz. 📊</p>
+        <div class="col-md-6">
+            <h5 class="mb-3">Oxirgi o'tkazmalar</h5>
+            <div class="list-group shadow-sm">
+                {% for t in transfers %}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong class="d-block">
+                            {{ t.from_account.name }} <i class="bi bi-arrow-right mx-1"></i> {{ t.to_account.name }}
+                        </strong>
+                        <small class="text-muted">{{ t.date|date:"d-M, H:i" }}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="fw-bold text-primary">{{ t.amount }}</span>
+                        <br>
+                        <small class="text-uppercase text-muted">{{ t.from_account.currency }}</small>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="list-group-item text-center text-muted">O'tkazmalar mavjud emas.</div>
+                {% endfor %}
+            </div>
+            <a href="{% url 'transfer_list' %}" class="btn btn-link btn-sm mt-2">Barchasini ko'rish</a>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* Bir oz ko'rinishni jilolash */
+    .list-group-item {
+        border-left: 4px solid #eee;
+        transition: 0.3s;
+    }
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+        border-left-color: #0d6efd;
+    }
+    h5 {
+        font-weight: 700;
+        color: #495057;
+    }
+</style>
 {% endblock %}

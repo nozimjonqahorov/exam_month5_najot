@@ -51,7 +51,7 @@ class LoginView(View):
 
 def logout_view(request):
     logout(request)
-    return redirect('home')
+    return redirect('login')
 
 class ProfileView(LoginRequiredMixin, View):
     def get(self, request):

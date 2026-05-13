@@ -11,7 +11,7 @@ class TransactionMainView(View):
     def get(self, request, form=None):
         queryset = Transaction.objects.filter(user=request.user).order_by('-date')
         f = TransactionFilter(request.GET, queryset=queryset, request=request)
-        
+            
         context = {
             "categories": Category.objects.filter(user=request.user),
             "transactions": f.qs, 
